@@ -7,8 +7,33 @@ export const api = axios.create({
   headers: {
     'Content-Type': 'application/json',
   },
-  withCredentials: true,
+  // withCredentials might cause CORS issues if not properly configured
+  // Only enable if backend explicitly requires it
+  withCredentials: false,
+  timeout: 30000, // 30 seconds timeout
 });
+
+// Test API connection on load
+export const testApiConnection = async (): Promise<boolean> => {
+  try {
+    const baseUrl = API_BASE_URL.replace('/api', '');
+    const response = await axios.get(`${baseUrl}/health`, { timeout: 10000 });
+    console.log('✅ API connection test successful:', response.data);
+    return true;
+  } catch (error: any) {
+    console.error('❌ API connection test failed:', {
+      message: error.message,
+      url: API_BASE_URL.replace('/api', '/health'),
+      possibleIssues: [
+        'Backend server might be sleeping (Render free tier)',
+        'CORS configuration issue - add Netlify URL to CORS_ORIGIN in Render',
+        'Backend URL might be incorrect',
+        'Network connectivity issue',
+      ],
+    });
+    return false;
+  }
+};
 
 // Request interceptor to add auth token
 api.interceptors.request.use(
@@ -39,7 +64,17 @@ api.interceptors.response.use(
       console.error('API Request Error:', {
         message: 'No response received from server',
         url: error.config?.url,
+        baseURL: error.config?.baseURL,
+        fullURL: `${error.config?.baseURL}${error.config?.url}`,
       });
+      // Check if it's a CORS or network issue
+      if (!error.response && error.request) {
+        console.error('Possible issues:');
+        console.error('1. Backend server might be down or sleeping (Render free tier)');
+        console.error('2. CORS configuration issue - check CORS_ORIGIN in Render');
+        console.error('3. Network connectivity issue');
+        console.error('4. Backend URL might be incorrect:', API_BASE_URL);
+      }
     } else {
       console.error('API Error:', error.message);
     }

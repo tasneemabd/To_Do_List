@@ -37,7 +37,20 @@ const Login: React.FC = () => {
       showToast('Login successful!', 'success');
       navigate('/dashboard');
     } catch (error: any) {
-      showToast(error.response?.data?.message || 'Login failed', 'error');
+      console.error('Login error:', error);
+      
+      // Handle network/CORS errors
+      if (error.response?.status === 0 || !error.response) {
+        const errorMessage = `Cannot connect to server. Please check:\n1. Backend is running on Render\n2. CORS is configured correctly (add Netlify URL to CORS_ORIGIN in Render)\n3. Network connection`;
+        showToast(errorMessage, 'error');
+      } else {
+        const errorMessage = 
+          error.response?.data?.message || 
+          error.response?.data?.error || 
+          error.message || 
+          'Login failed. Please try again.';
+        showToast(errorMessage, 'error');
+      }
     } finally {
       setIsLoading(false);
     }

@@ -21,20 +21,31 @@ const server = http.createServer(app);
 const io = new SocketIOServer(server, {
   cors: {
     origin: config.cors.origin,
-    methods: ['GET', 'POST'],
+    methods: ['GET', 'POST', 'PUT', 'DELETE', 'PATCH', 'OPTIONS'],
     credentials: true,
+    allowedHeaders: ['Content-Type', 'Authorization', 'X-Requested-With'],
   },
 });
 
 // Make io available to routes via app.locals
 app.locals.io = io;
 
-// Security middleware
-app.use(helmet());
+// Security middleware - configure helmet to allow CORS
+app.use(
+  helmet({
+    crossOriginResourcePolicy: { policy: 'cross-origin' },
+    crossOriginEmbedderPolicy: false,
+  })
+);
+
+// CORS configuration - must be before routes
 app.use(
   cors({
     origin: config.cors.origin,
     credentials: true,
+    methods: ['GET', 'POST', 'PUT', 'DELETE', 'PATCH', 'OPTIONS'],
+    allowedHeaders: ['Content-Type', 'Authorization', 'X-Requested-With'],
+    exposedHeaders: ['Content-Type', 'Authorization'],
   })
 );
 

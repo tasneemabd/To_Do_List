@@ -51,13 +51,23 @@ const Register: React.FC = () => {
       }
       
       // Handle other errors
-      const errorMessage = 
-        error.response?.data?.message || 
-        error.response?.data?.error || 
-        (error.response?.status === 0 || !error.response 
-          ? 'Cannot connect to server. Please check your internet connection and try again.'
-          : error.message) || 
-        'Registration failed. Please try again.';
+      let errorMessage = '';
+      
+      if (error.response?.status === 0 || !error.response) {
+        // Network error - no response from server
+        errorMessage = `Cannot connect to server at ${import.meta.env.VITE_API_URL || 'https://to-do-list-1-qycz.onrender.com/api'}. `;
+        errorMessage += 'Possible issues:\n';
+        errorMessage += '1. Backend server might be sleeping (Render free tier - wait 30-60 seconds)\n';
+        errorMessage += '2. CORS not configured - add your Netlify URL to CORS_ORIGIN in Render\n';
+        errorMessage += '3. Check backend URL in Render dashboard';
+      } else {
+        errorMessage = 
+          error.response?.data?.message || 
+          error.response?.data?.error || 
+          error.message || 
+          'Registration failed. Please try again.';
+      }
+      
       showToast(errorMessage, 'error');
     } finally {
       setIsLoading(false);
