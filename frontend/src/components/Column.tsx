@@ -11,7 +11,7 @@ interface ColumnProps {
   color?: string;
 }
 
-const Column: React.FC<ColumnProps> = ({ id, title, count, children, className, color }) => {
+const Column: React.FC<ColumnProps> = ({ id, title, count, children, className }) => {
   const { setNodeRef, isOver } = useDroppable({
     id,
   });

@@ -2,14 +2,12 @@ import React, { useState, useEffect } from 'react';
 import { useForm } from 'react-hook-form';
 import { zodResolver } from '@hookform/resolvers/zod';
 import { z } from 'zod';
-import { Task } from '../types';
 import { useTaskModal } from '../hooks/useTaskModal';
 import { createTask, updateTask } from '../services/task.service';
 import { useToast } from './Toast';
 import Button from './Button';
 import Input from './Input';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from './Card';
-import { cn } from '../utils/cn';
 
 const taskSchema = z.object({
   title: z.string().min(1, 'Title is required').max(200),
@@ -36,8 +34,6 @@ const TaskModal: React.FC<TaskModalProps> = ({ onSuccess }) => {
     handleSubmit,
     formState: { errors },
     reset,
-    watch,
-    setValue,
   } = useForm<TaskFormData>({
     resolver: zodResolver(taskSchema),
     defaultValues: {

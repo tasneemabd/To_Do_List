@@ -39,7 +39,26 @@ const Register: React.FC = () => {
       showToast('Registration successful!', 'success');
       navigate('/dashboard');
     } catch (error: any) {
-      showToast(error.response?.data?.message || 'Registration failed', 'error');
+      console.error('Registration error:', error);
+      
+      // Handle validation errors
+      if (error.response?.data?.errors && Array.isArray(error.response.data.errors)) {
+        const validationErrors = error.response.data.errors
+          .map((err: any) => `${err.path?.join('.') || 'Field'}: ${err.message}`)
+          .join(', ');
+        showToast(`Validation error: ${validationErrors}`, 'error');
+        return;
+      }
+      
+      // Handle other errors
+      const errorMessage = 
+        error.response?.data?.message || 
+        error.response?.data?.error || 
+        (error.response?.status === 0 || !error.response 
+          ? 'Cannot connect to server. Please check your internet connection and try again.'
+          : error.message) || 
+        'Registration failed. Please try again.';
+      showToast(errorMessage, 'error');
     } finally {
       setIsLoading(false);
     }

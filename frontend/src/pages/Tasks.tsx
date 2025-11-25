@@ -15,7 +15,7 @@ import {
   verticalListSortingStrategy,
 } from '@dnd-kit/sortable';
 import { getTasks, updateTask, deleteTask, updateTaskOrder } from '../services/task.service';
-import { Task, TaskFilters } from '../types';
+import { Task } from '../types';
 import Layout from '../components/Layout';
 import Button from '../components/Button';
 import Input from '../components/Input';
@@ -43,7 +43,6 @@ const TasksContent: React.FC = () => {
   const queryClient = useQueryClient();
   const [search, setSearch] = useState('');
   const [activeFilter, setActiveFilter] = useState<'all' | 'todo' | 'inprogress' | 'done'>('all');
-  const [activeId, setActiveId] = useState<string | null>(null);
 
   const sensors = useSensors(
     useSensor(PointerSensor, {
@@ -174,17 +173,16 @@ const TasksContent: React.FC = () => {
     await deleteTaskMutation.mutateAsync(id);
   };
 
-  const handleDragStart = (event: DragStartEvent) => {
-    setActiveId(event.active.id as string);
+  const handleDragStart = (_event: DragStartEvent) => {
+    // Visual feedback during drag start
   };
 
-  const handleDragOver = (event: DragOverEvent) => {
+  const handleDragOver = (_event: DragOverEvent) => {
     // Visual feedback during drag
   };
 
   const handleDragEnd = async (event: DragEndEvent) => {
     const { active, over } = event;
-    setActiveId(null);
 
     if (!over) return;
 

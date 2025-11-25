@@ -4,7 +4,6 @@ import { getTaskStatistics } from '../services/task.service';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '../components/Card';
 import Layout from '../components/Layout';
 import Spinner from '../components/Spinner';
-import { cn } from '../utils/cn';
 import {
   Chart as ChartJS,
   CategoryScale,

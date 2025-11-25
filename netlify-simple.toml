@@ -1,0 +1,11 @@
+# إعدادات Netlify لرفع dist فقط (بدون بناء)
+# إذا اخترت رفع dist فقط، استخدم هذا الملف
+
+[build]
+  publish = "dist"
+
+[[redirects]]
+  from = "/*"
+  to = "/index.html"
+  status = 200
+
