@@ -19,7 +19,7 @@ logs/*.log
 
 # ===== Build / Dist =====
 
-build/
+
 .cache/
 
 # ===== React =====
