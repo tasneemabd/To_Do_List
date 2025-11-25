@@ -18,7 +18,7 @@ logs
 logs/*.log
 
 # ===== Build / Dist =====
-dist/
+
 build/
 .cache/
 
