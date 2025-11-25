@@ -1,0 +1,47 @@
+// Prisma Schema for To-Do List Application
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "mongodb"
+  url      = env("DATABASE_URL")
+}
+
+model User {
+  id        String   @id @default(auto()) @map("_id") @db.ObjectId
+  email    String  @unique
+  username String  @unique
+  password String
+  name     String?
+  role     String  @default("user") // user, admin
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  tasks Task[]
+
+  @@map("users")
+}
+
+model Task {
+  id          String   @id @default(auto()) @map("_id") @db.ObjectId
+  title       String
+  description String?
+  priority    String   @default("medium") // low, medium, high
+  status      String   @default("todo") // todo, inprogress, done
+  dueDate     DateTime?
+  tags        String[]
+  orderIndex  Int      @default(0)
+  isCompleted Boolean  @default(false)
+  ownerId     String   @db.ObjectId
+  owner       User     @relation(fields: [ownerId], references: [id], onDelete: Cascade)
+  createdAt   DateTime @default(now())
+  updatedAt   DateTime @updatedAt
+
+  @@index([ownerId])
+  @@index([status])
+  @@index([priority])
+  @@index([orderIndex])
+  @@map("tasks")
+}
+
